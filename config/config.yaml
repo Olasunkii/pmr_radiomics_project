@@ -1,6 +1,7 @@
 data:
   raw_path: "data/raw/"
   processed_path: "data/processed/"
+  raw_file: "data/raw/PMR_TLG_allcases_joined_20260420_2252.csv"
 
 model:
   test_size: 0.2
