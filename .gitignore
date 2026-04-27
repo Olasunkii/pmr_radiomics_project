@@ -1,0 +1,18 @@
+# Python
+__pycache__/
+*.pyc
+
+# Data
+data/raw/
+data/processed/
+
+# Outputs
+outputs/
+
+# Environment
+.env
+.venv
+*.ipynb_checkpoints
+
+# Logs
+*.log
