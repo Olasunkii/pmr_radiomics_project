@@ -7,7 +7,6 @@ class ShapAnalyzer:
     SHAP analysis module for interpretability.
     Saves multiple types of SHAP visualizations.
     """
-
     def __init__(self, output_path):
         self.output_path = output_path
         self.output_path.mkdir(parents=True, exist_ok=True)
@@ -71,4 +70,31 @@ class ShapAnalyzer:
         shap.plots.decision(shap_values, show=False)
         plt.savefig(self.output_path / filename, dpi=300, bbox_inches='tight')
         plt.close()
+        print(f"Saved: {filename}")
+        
+    def save_waterfall_plot(
+        self,
+        shap_values,
+        patient_index=0,
+        filename="shap_waterfall.png"
+        ):
+        """
+        Save SHAP waterfall plot for a single patient.
+        """
+
+        plt.figure()
+
+        shap.plots.waterfall(
+            shap_values[patient_index],
+            show=False
+        )
+
+        plt.savefig(
+            self.output_path / filename,
+            dpi=300,
+            bbox_inches='tight'
+        )
+
+        plt.close()
+
         print(f"Saved: {filename}")
