@@ -2,7 +2,8 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import numpy as np
 from pathlib import Path
-
+from sklearn.metrics import roc_curve, auc
+from sklearn.calibration import calibration_curve
 
 class Visualizer:
     """
@@ -199,3 +200,95 @@ class Visualizer:
         plt.close()
 
         print(f"Saved: {filename}")
+
+    
+
+        def plot_roc_curves(
+            self,
+            results_dict,
+            y_test,
+            filename="roc_curves.png"
+            ):
+            """
+            Plot ROC curves for all models.
+            """
+
+            plt.figure()
+
+            for name, result in results_dict.items():
+
+                y_prob = result["y_prob"]
+
+                fpr, tpr, _ = roc_curve(y_test, y_prob)
+                roc_auc = auc(fpr, tpr)
+
+                plt.plot(
+                    fpr,
+                    tpr,
+                    label=f"{name} (AUC={roc_auc:.3f})"
+                )
+
+            plt.plot([0, 1], [0, 1], linestyle='--')
+
+            plt.xlabel("False Positive Rate")
+            plt.ylabel("True Positive Rate")
+            plt.title("ROC Curves")
+            plt.legend()
+
+            plt.savefig(
+                self.output_path / filename,
+                dpi=300,
+                bbox_inches='tight'
+            )
+
+            plt.close()
+
+            print(f"Saved: {filename}")
+
+        
+
+        def plot_calibration_curves(
+            self,
+            results_dict,
+            y_test,
+            filename="calibration_curves.png"
+        ):
+            """
+            Plot calibration curves.
+            """
+
+            plt.figure()
+
+            for name, result in results_dict.items():
+
+                y_prob = result["y_prob"]
+
+                prob_true, prob_pred = calibration_curve(
+                    y_test,
+                    y_prob,
+                    n_bins=10
+                )
+
+                plt.plot(
+                    prob_pred,
+                    prob_true,
+                    marker='o',
+                    label=name
+                )
+
+            plt.plot([0, 1], [0, 1], linestyle='--')
+
+            plt.xlabel("Mean Predicted Probability")
+            plt.ylabel("Fraction of Positives")
+            plt.title("Calibration Curves")
+            plt.legend()
+
+            plt.savefig(
+                self.output_path / filename,
+                dpi=300,
+                bbox_inches='tight'
+            )
+
+            plt.close()
+
+            print(f"Saved: {filename}")
