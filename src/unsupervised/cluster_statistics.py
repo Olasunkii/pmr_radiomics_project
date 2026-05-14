@@ -139,4 +139,4 @@ class ClusterStatistics:
 
         results_df["cohens_d"] = effect_sizes
 
-        return results_df #
+        return results_df

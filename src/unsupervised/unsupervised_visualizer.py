@@ -1,4 +1,5 @@
 import matplotlib.pyplot as plt
+import numpy as np
 import seaborn as sns
 
 
@@ -219,6 +220,59 @@ class UnsupervisedVisualizer:
             self.output_path / filename,
             dpi=300,
             bbox_inches='tight'
+        )
+
+        plt.close()
+
+        print(f"Saved: {filename}")
+
+    def plot_volcano(
+        self,
+        stats_df,
+        filename="volcano_plot.png"
+        ):
+        """
+        Plot volcano plot for cluster biomarkers.
+        """
+
+        plt.figure(figsize=(8, 6))
+
+        x = stats_df["cohens_d"]
+        y = -np.log10(stats_df["fdr_corrected_p"])
+
+        plt.scatter(x, y)
+
+        # Annotate top features
+        top_features = stats_df.nsmallest(
+            10,
+            "fdr_corrected_p"
+        )
+
+        for _, row in top_features.iterrows():
+
+            plt.text(
+                row["cohens_d"],
+                -np.log10(row["fdr_corrected_p"]),
+                row["feature"],
+                fontsize=8
+            )
+
+        plt.axhline(
+            -np.log10(0.05),
+            linestyle="--"
+        )
+
+        plt.xlabel("Cohen's d")
+        plt.ylabel("-log10(FDR corrected p-value)")
+
+        plt.title("Volcano Plot of Cluster Biomarkers")
+
+        plt.tight_layout()
+
+        plt.savefig(
+            self.output_path / filename,
+            dpi=300,
+            bbox_inches="tight"
         )
 
         plt.close()

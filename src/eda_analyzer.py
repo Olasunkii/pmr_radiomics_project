@@ -42,7 +42,7 @@ class EDAAnalyzer:
 
         file_path = self.output_path / "target_distribution.png"
         plt.savefig(file_path)
-        plt.show()
+        #plt.show()
         plt.close()
 
         return counts, percentages
@@ -74,7 +74,7 @@ class EDAAnalyzer:
 
         file_path = self.output_path / "correlation_matrix.png"
         plt.savefig(file_path)
-        plt.show()
+        #plt.show()
         plt.close()
 
         return corr
@@ -91,3 +91,33 @@ class EDAAnalyzer:
 
         self.logger.info("High correlation pairs identified.")
         return high_corr
+    
+if __name__ == "__main__":
+    from pathlib import Path
+    from src.config_loader import ConfigLoader
+    from preprocessing.data_loader import DataLoader
+    from preprocessing.data_cleaner import DataCleaner
+
+    print("Testing EDA Analyzer...")
+
+    config = ConfigLoader()
+    file_path = config.get_path("data", "raw_file")
+
+    loader = DataLoader(file_path)
+    df = loader.load_data()
+
+    cleaner = DataCleaner(logger=loader.logger)
+    df_clean = cleaner.encode_target(df)
+    df_clean = cleaner.drop_columns(df_clean)
+    df_clean = cleaner.handle_missing(df_clean)
+
+    eda = EDAAnalyzer(
+        Path(config.get_path("output", "figures_path")),
+        logger=loader.logger
+    )
+
+    eda.basic_info(df_clean)
+    eda.target_distribution(df_clean)
+    eda.correlation_matrix(df_clean)
+
+    print("EDA test complete.")

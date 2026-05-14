@@ -66,3 +66,34 @@ class Preprocessor:
         X_test_scaled = self.scaler.transform(X_test)
 
         return X_train_scaled, X_test_scaled
+    
+if __name__ == "__main__":
+    from pathlib import Path
+    from src.config_loader import ConfigLoader
+    from preprocessing.data_loader import DataLoader
+    from preprocessing.data_cleaner import DataCleaner
+
+    print("Testing Preprocessor...")
+
+    config = ConfigLoader()
+    file_path = config.get_path("data", "raw_file")
+
+    loader = DataLoader(file_path)
+    df = loader.load_data()
+
+    cleaner = DataCleaner(logger=loader.logger)
+    df_clean = cleaner.encode_target(df)
+    df_clean = cleaner.drop_columns(df_clean)
+    df_clean = cleaner.handle_missing(df_clean)
+
+    preprocessor = Preprocessor(
+        test_size=config.get("model", "test_size"),
+        random_state=config.get("model", "random_state"),
+        logger=loader.logger
+    )
+
+    X_train, X_test, y_train, y_test = preprocessor.split(df_clean)
+    X_train_scaled, X_test_scaled = preprocessor.scale(X_train, X_test)
+
+    print("Preprocessing successful.")
+    print(X_train.shape, X_test.shape)

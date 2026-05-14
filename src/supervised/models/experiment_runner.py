@@ -1,6 +1,6 @@
 import pandas as pd
 import joblib
-from src.models.model_trainer import ModelTrainer
+from src.supervised.models.model_trainer import ModelTrainer
 
 
 def train_and_evaluate_subset(name, X_train, X_test, y_train, y_test, config, logger):

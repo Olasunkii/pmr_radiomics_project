@@ -1,6 +1,6 @@
 import pandas as pd
 from pathlib import Path
-from src.logger import setup_logger
+from src.utils.logger import setup_logger
 from src.config_loader import ConfigLoader
 
 
@@ -22,9 +22,13 @@ class DataLoader:
             Logger instance. If not provided, a default logger is created.
         """
         self.data_path = Path(data_path)
-        config = ConfigLoader()
-        log_path = config.get_path("output", "logs_path") / "pipeline.log"
-        self.logger = logger or setup_logger(log_path)
+        if logger is not None:
+            self.logger = logger
+        else:
+            config = ConfigLoader()
+            log_path = config.get_path("output", "logs_path") / "pipeline.log"
+            self.logger = setup_logger(log_path)
+            self.logger = logger or setup_logger(log_path)
 
     def load_data(self) -> pd.DataFrame:
         """
